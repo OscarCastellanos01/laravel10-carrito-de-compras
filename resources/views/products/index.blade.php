@@ -1,53 +1,36 @@
 @extends('layouts.app')
 
-@section('title', 'Products')
+@section('title', 'Tienda')
 
 @section('contenido')
-    <div class="container">
-        <h1 class="text-center py-5">Productos</h1>
-
-        <div class="py-3">
-            <a
-                name="add-cart"
-                id="add-cart"
-                class="btn btn-primary"
-                href="{{ route('carrito') }}"
-                role="button"
-                >Ver carrito</a
-            >
-        </div>
-
-        @if (session('mensaje'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Exito!</strong> {{ session('mensaje') }}.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        @endif
-
-        <div class="row g-4">
-            @forelse ($products as $product)
-                <div class="col-6 col-md-3 col-lg-2">
-                    <form action="{{ route('products.addCart', ['productId' => $product->id, 'description' => $product->description, 'price' => $product->price]) }}" method="POST">
-                        @csrf
-                        <div class="card">
-                            <img src="{{ asset('assets/img/products/' . $product->img_url) }}" class="card-img-top" alt="{{ $product->description }}">
-                        
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $product->description }}</h5>
-                                <p class="card-text">Q.{{ $product->price }}</p>
-                                <p class="card-text">Stock: {{ $product->stock }}</p>
-
-                                @if ($product->stock != 0)
-                                    <button type="submit" class="btn btn-primary">Agregar</button>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
+<div class="mx-auto mt-4 grid gap-4  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    @forelse ($products as $product)
+        <form action="{{ route('products.addCart', ['productId' => $product->id, 'description' => $product->description, 'price' => $product->price]) }}" method="POST">
+        @csrf
+            <div class="card w-auto bg-base-100 shadow-xl">
+                <figure><img src="{{ asset('assets/img/products/' . $product->img_url) }}" alt="{{ $product->description }}" /></figure>
+                <div class="card-body">
+                    <h2 class="card-title">{{ $product->description }} </h2>
+                    <p>Q{{ $product->price }}</p>
+                    <p>Stock: {{ $product->stock }}</p>
+                    <div class="rating">
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400"  checked />
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+                    </div>
+                    <div class="card-actions justify-end">
+                        <button type="submit" class="btn btn-primary" {{ $product->stock === 0 ? 'disabled' : '' }}>
+                            Agregar
+                        </button>
+                    </div>
                 </div>
-            @empty
-                <span>No se encontro ningun resultado</span>
-            @endforelse
-
-            {{ $products->links() }}
-        </div>
+            </div>
+        </form>
+    @empty
+        <span>No se encontro ningun resultado</span>
+    @endforelse
+</div>
+{{ $products->links() }}
 @endsection
